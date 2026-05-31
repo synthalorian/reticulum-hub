@@ -1,4 +1,64 @@
-<div>
-  <h1 class="font-bold text-4xl">Alerts#index</h1>
-  <p>Find me in app/views/alerts/index.html.erb</p>
+<div class="mb-6 flex items-center justify-between">
+  <h1 class="text-2xl font-bold text-white">Alerts</h1>
+  <div class="flex items-center space-x-4">
+    <span class="text-sm text-gray-400"><%= @active_count %> active</span>
+    <span class="text-sm text-red-400"><%= @critical_count %> critical</span>
+  </div>
 </div>
+
+<% if @alerts.any? %>
+  <div class="bg-gray-800 rounded-xl border border-gray-700">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gray-750 text-gray-400 uppercase text-xs">
+          <tr>
+            <th class="px-6 py-3">Severity</th>
+            <th class="px-6 py-3">Message</th>
+            <th class="px-6 py-3">Status</th>
+            <th class="px-6 py-3">Triggered</th>
+            <th class="px-6 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-700">
+          <% @alerts.each do |alert| %>
+            <tr class="hover:bg-gray-750">
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= alert.severity_badge_class %>">
+                  <%= alert.severity %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-white"><%= alert.message %></td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                  <%= alert.status == 'active' ? 'bg-red-900/50 text-red-400' : alert.status == 'acknowledged' ? 'bg-yellow-900/50 text-yellow-400' : 'bg-green-900/50 text-green-400' %>">
+                  <%= alert.status %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-gray-400"><%= alert.triggered_at&.strftime("%Y-%m-%d %H:%M") || "—" %></td>
+              <td class="px-6 py-4">
+                <div class="flex items-center space-x-2">
+                  <% if alert.status == 'active' %>
+                    <%= button_to acknowledge_alert_path(alert), method: :post, class: "text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded" do %>
+                      Ack
+                    <% end %>
+                  <% end %>
+                  <% if alert.status != 'resolved' %>
+                    <%= button_to resolve_alert_path(alert), method: :post, class: "text-xs px-2 py-1 bg-green-900/50 hover:bg-green-900 text-green-400 rounded" do %>
+                      Resolve
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% else %>
+  <div class="bg-gray-800 rounded-xl border border-gray-700 p-12 text-center">
+    <svg class="w-12 h-12 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p class="text-gray-400">No alerts.</p>
+    <p class="text-sm text-gray-500 mt-2">The network is healthy.</p>
+  </div>
+<% end %>

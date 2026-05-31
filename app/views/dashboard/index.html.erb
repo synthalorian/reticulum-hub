@@ -1,4 +1,190 @@
-<div>
-  <h1 class="font-bold text-4xl">Dashboard#index</h1>
-  <p>Find me in app/views/dashboard/index.html.erb</p>
+<div data-controller="network-status">
+  <%# Stats cards %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-400">Active Peers</p>
+          <p class="text-3xl font-bold text-green-400 mt-1" data-network-status-target="activePeers"><%= @active_peer_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-green-900/50 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-400">Degraded</p>
+          <p class="text-3xl font-bold text-yellow-400 mt-1" data-network-status-target="degradedPeers"><%= @degraded_peer_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-yellow-900/50 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-400">Offline</p>
+          <p class="text-3xl font-bold text-red-400 mt-1" data-network-status-target="offlinePeers"><%= @offline_peer_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-red-900/50 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-400">Active Alerts</p>
+          <p class="text-3xl font-bold text-cyan-400 mt-1" data-network-status-target="alertCount"><%= @alert_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-cyan-900/50 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Peers table %>
+  <div class="bg-gray-800 rounded-xl border border-gray-700 mb-8">
+    <div class="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-white">Peers</h2>
+      <span class="text-sm text-gray-400"><%= @peers.size %> total</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gray-750 text-gray-400 uppercase text-xs">
+          <tr>
+            <th class="px-6 py-3">Name</th>
+            <th class="px-6 py-3">Hash</th>
+            <th class="px-6 py-3">Hops</th>
+            <th class="px-6 py-3">Quality</th>
+            <th class="px-6 py-3">Status</th>
+            <th class="px-6 py-3">Last Seen</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-700" data-network-status-target="peersTable">
+          <% @peers.each do |peer| %>
+            <tr class="hover:bg-gray-750">
+              <td class="px-6 py-4 font-medium text-white"><%= peer[:name] || "Unknown" %></td>
+              <td class="px-6 py-4 text-gray-400 font-mono text-xs"><%= peer[:destination_hash] %></td>
+              <td class="px-6 py-4 text-gray-300"><%= peer[:hops] || 0 %></td>
+              <td class="px-6 py-4">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-700 rounded-full h-2 mr-2">
+                    <div class="bg-<%= peer[:link_quality].to_f >= 0.8 ? 'green' : peer[:link_quality].to_f >= 0.5 ? 'yellow' : 'red' %>-500 h-2 rounded-full" style="width: <%= ((peer[:link_quality] || 0) * 100).round %>%"></div>
+                  </div>
+                  <span class="text-gray-300 text-xs"><%= ((peer[:link_quality] || 0) * 100).round %>%</span>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <% color = case peer[:status]; when 'active' then 'green'; when 'degraded' then 'yellow'; when 'offline' then 'red'; else 'gray'; end %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-<%= color %>-100 text-<%= color %>-800">
+                  <%= peer[:status] %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-gray-400">
+                <% if peer[:last_seen] %>
+                  <% time_ago = Time.current - peer[:last_seen] %>
+                  <% if time_ago < 60 %>just now
+                  <% elsif time_ago < 3600 %><%= (time_ago / 60).to_i %>m ago
+                  <% elsif time_ago < 86400 %><%= (time_ago / 3600).to_i %>h ago
+                  <% else %><%= (time_ago / 86400).to_i %>d ago<% end %>
+                <% else %>never<% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <%# Interfaces %>
+  <div class="bg-gray-800 rounded-xl border border-gray-700 mb-8">
+    <div class="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-white">Interfaces</h2>
+      <span class="text-sm text-gray-400"><%= @active_interface_count %>/<%= @interfaces.size %> up</span>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6" data-network-status-target="interfacesGrid">
+      <% @interfaces.each do |iface| %>
+        <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-medium text-white"><%= iface[:name] %></h3>
+            <% status_color = case iface[:status]; when 'up' then 'green'; when 'down' then 'gray'; when 'error' then 'red'; else 'yellow'; end %>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-<%= status_color %>-100 text-<%= status_color %>-800">
+              <%= iface[:status] %>
+            </span>
+          </div>
+          <p class="text-xs text-gray-400 mb-3"><%= iface[:interface_type] %></p>
+          <div class="space-y-1 text-xs">
+            <div class="flex justify-between text-gray-400">
+              <span>Bandwidth</span>
+              <span class="text-gray-300">
+                <% fmt = ->(b) { b.nil? ? "0B" : b < 1024 ? "#{b}B" : b < 1024*1024 ? "#{(b/1024.0).round(1)}KB" : "#{(b/(1024.0*1024)).round(1)}MB" } %>
+                ↓<%= fmt.call(iface[:bandwidth_in]) %> ↑<%= fmt.call(iface[:bandwidth_out]) %>
+              </span>
+            </div>
+            <div class="flex justify-between text-gray-400">
+              <span>Uptime</span>
+              <span class="text-gray-300">
+                <% if iface[:uptime] && iface[:uptime] > 0 %>
+                  <%= iface[:uptime] / 3600 %>h <%= (iface[:uptime] % 3600) / 60 %>m
+                <% else %>—<% end %>
+              </span>
+            </div>
+            <div class="flex justify-between text-gray-400">
+              <span>Error Rate</span>
+              <span class="text-gray-300"><%= iface[:error_rate] ? "#{(iface[:error_rate] * 100).round(2)}%" : "—" %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# System Stats %>
+  <div class="bg-gray-800 rounded-xl border border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-700">
+      <h2 class="text-lg font-semibold text-white">System Status</h2>
+    </div>
+    <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <div class="flex justify-between text-sm mb-2">
+          <span class="text-gray-400">CPU</span>
+          <span class="text-white font-medium"><%= @stats[:cpu_percent] || 0 %>%</span>
+        </div>
+        <div class="w-full bg-gray-700 rounded-full h-2">
+          <div class="bg-cyan-500 h-2 rounded-full transition-all" style="width: <%= @stats[:cpu_percent] || 0 %>%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-2">
+          <span class="text-gray-400">Memory</span>
+          <span class="text-white font-medium"><%= @stats[:memory_percent] || 0 %>%</span>
+        </div>
+        <div class="w-full bg-gray-700 rounded-full h-2">
+          <div class="bg-purple-500 h-2 rounded-full transition-all" style="width: <%= @stats[:memory_percent] || 0 %>%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-2">
+          <span class="text-gray-400">Uptime</span>
+          <span class="text-white font-medium">
+            <% if @stats[:uptime] && @stats[:uptime] > 0 %>
+              <% days = @stats[:uptime] / 86400; hours = (@stats[:uptime] % 86400) / 3600; mins = (@stats[:uptime] % 3600) / 60 %>
+              <%= "#{days}d " if days > 0 %><%= "#{hours}h " if hours > 0 %><%= "#{mins}m" %>
+            <% else %>—<% end %>
+          </span>
+        </div>
+        <div class="text-xs text-gray-500 mt-1">
+          <%= @stats[:peer_count] || 0 %> peers · <%= @stats[:interface_count] || 0 %> interfaces
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

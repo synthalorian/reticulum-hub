@@ -1,4 +1,53 @@
-<div>
-  <h1 class="font-bold text-4xl">Interfaces#index</h1>
-  <p>Find me in app/views/interfaces/index.html.erb</p>
+<div class="mb-6 flex items-center justify-between">
+  <h1 class="text-2xl font-bold text-white">Interfaces</h1>
+</div>
+
+<div class="bg-gray-800 rounded-xl border border-gray-700">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-gray-750 text-gray-400 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3">Name</th>
+          <th class="px-6 py-3">Type</th>
+          <th class="px-6 py-3">Status</th>
+          <th class="px-6 py-3">Bandwidth</th>
+          <th class="px-6 py-3">Uptime</th>
+          <th class="px-6 py-3">Error Rate</th>
+          <th class="px-6 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700">
+        <% @interfaces.each do |iface| %>
+          <tr class="hover:bg-gray-750">
+            <td class="px-6 py-4 font-medium text-white"><%= iface.name %></td>
+            <td class="px-6 py-4 text-gray-400"><%= iface.interface_type %></td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= iface.status_badge_class %>">
+                <%= iface.status %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-gray-300"><%= iface.formatted_bandwidth %></td>
+            <td class="px-6 py-4 text-gray-300"><%= iface.formatted_uptime %></td>
+            <td class="px-6 py-4 text-gray-300"><%= iface.error_rate ? "#{(iface.error_rate * 100).round(2)}%" : "—" %></td>
+            <td class="px-6 py-4">
+              <div class="flex items-center space-x-2">
+                <% if iface.status == "up" %>
+                  <%= button_to disable_interface_path(iface.name), method: :post, class: "text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded" do %>
+                    Disable
+                  <% end %>
+                  <%= button_to restart_interface_path(iface.name), method: :post, class: "text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded" do %>
+                    Restart
+                  <% end %>
+                <% else %>
+                  <%= button_to enable_interface_path(iface.name), method: :post, class: "text-xs px-2 py-1 bg-green-900/50 hover:bg-green-900 text-green-400 rounded" do %>
+                    Enable
+                  <% end %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
