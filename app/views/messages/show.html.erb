@@ -1,4 +1,30 @@
-<div>
-  <h1 class="font-bold text-4xl">Messages#show</h1>
-  <p>Find me in app/views/messages/show.html.erb</p>
+<div class="mb-6">
+  <%= link_to messages_path, class: "text-sm text-gray-400 hover:text-white flex items-center" do %>
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to messages
+  <% end %>
+</div>
+
+<div class="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-3xl">
+  <div class="border-b border-gray-700 pb-4 mb-4">
+    <h1 class="text-xl font-bold text-white mb-1"><%= @message.subject || "(no subject)" %></h1>
+    <div class="flex items-center text-sm text-gray-400">
+      <span class="font-mono"><%= @message.sender_hash %></span>
+      <span class="mx-2">→</span>
+      <span class="font-mono"><%= @message.recipient_hash %></span>
+    </div>
+    <p class="text-xs text-gray-500 mt-1"><%= @message.sent_at&.strftime("%Y-%m-%d %H:%M:%S") || "—" %></p>
+  </div>
+
+  <div class="prose prose-invert max-w-none">
+    <p class="text-gray-300 whitespace-pre-wrap"><%= @message.body %></p>
+  </div>
+
+  <div class="mt-6 pt-4 border-t border-gray-700 flex items-center justify-between">
+    <div class="text-sm text-gray-500">
+      Status: <span class="text-gray-300"><%= @message.status_icon %></span>
+    </div>
+    <%= link_to "Reply", new_message_path(message: { recipient_hash: @message.sender_hash }),
+          class: "px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition" %>
+  </div>
 </div>
