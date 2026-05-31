@@ -11,7 +11,7 @@ class Message < ApplicationRecord
   scope :recent, -> { where("sent_at > ?", 24.hours.ago) }
 
   def conversation_key
-n    [sender_hash, recipient_hash].sort.join(":")
+    [sender_hash, recipient_hash].sort.join(":")
   end
 
   def status_icon

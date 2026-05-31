@@ -16,7 +16,7 @@ class MessagesController < ApplicationController
   end
 
   def create
-    @message = Message.new(message_params.merge(direction: "outbound", sent_at: Time.current))
+    @message = Message.new(message_params.merge(direction: "outbound", sent_at: Time.current, sender_hash: "<local>"))
 
     if @message.save
       # Attempt to send via RNS

@@ -4,7 +4,7 @@ class InterfacesController < ApplicationController
   def index
     rns = RnsAdapter.new
     rns.connect
-    @interfaces = rns.interfaces.map { |i| Interface.new(i) }
+    @interfaces = rns.interfaces.map { |i| Interface.find_or_initialize_by(name: i[:name]).tap { |iface| iface.assign_attributes(i) } }
   end
 
   def show

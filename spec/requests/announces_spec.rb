@@ -3,16 +3,15 @@ require 'rails_helper'
 RSpec.describe "Announces", type: :request do
   describe "GET /index" do
     it "returns http success" do
-      get "/announces/index"
+      get announces_path
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /create" do
-    it "returns http success" do
-      get "/announces/create"
-      expect(response).to have_http_status(:success)
+  describe "POST /create" do
+    it "creates an announce and redirects" do
+      post announces_path, params: { name: "Test Service", type: "lxmf" }
+      expect(response).to have_http_status(:redirect)
     end
   end
-
 end

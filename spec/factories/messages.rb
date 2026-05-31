@@ -1,13 +1,13 @@
 FactoryBot.define do
   factory :message do
-    sender_hash { "MyString" }
-    recipient_hash { "MyString" }
-    subject { "MyString" }
-    body { "MyText" }
-    sent_at { "2026-05-30 22:33:37" }
+    sender_hash { "<sender>" }
+    recipient_hash { "<recipient>" }
+    subject { "Test Message" }
+    body { "Hello from Reticulum" }
+    sent_at { Time.current }
     delivered { false }
     read { false }
-    direction { "MyString" }
-    metadata { "" }
+    direction { "outbound" }
+    metadata { {} }
   end
 end

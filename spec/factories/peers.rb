@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :peer do
-    destination_hash { "MyString" }
-    name { "MyString" }
-    last_seen { "2026-05-30 22:33:25" }
-    link_quality { 1.5 }
+    sequence(:destination_hash) { |n| "<peer#{n}>" }
+    name { "Test Peer" }
+    last_seen { 5.minutes.ago }
+    link_quality { 0.85 }
     hops { 1 }
-    status { "MyString" }
-    metadata { "" }
+    status { "active" }
+    metadata { {} }
   end
 end
