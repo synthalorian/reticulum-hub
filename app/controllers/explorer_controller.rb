@@ -4,7 +4,11 @@ class ExplorerController < ApplicationController
   def index
     rns = RnsAdapter.new
     rns.connect
-    @nodes = rns.nodes.map { |n| Node.new(n) }
+    @nodes = rns.nodes.map do |n|
+      node = Node.find_or_initialize_by(destination_hash: n[:destination_hash])
+      node.assign_attributes(n.except(:services))
+      node
+    end
     @network_map = NetworkMap.new(rns).graph
   end
 
@@ -14,7 +18,10 @@ class ExplorerController < ApplicationController
       rns = RnsAdapter.new
       rns.connect
       details = rns.nodes.find { |n| n[:destination_hash] == params[:id] }
-      @node = Node.new(details) if details
+      if details
+        @node = Node.find_or_initialize_by(destination_hash: details[:destination_hash])
+        @node.assign_attributes(details.except(:services))
+      end
     end
     @services = @node&.services || []
   end

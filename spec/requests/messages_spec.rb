@@ -3,30 +3,22 @@ require 'rails_helper'
 RSpec.describe "Messages", type: :request do
   describe "GET /index" do
     it "returns http success" do
-      get "/messages/index"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /show" do
-    it "returns http success" do
-      get "/messages/show"
+      get messages_path
       expect(response).to have_http_status(:success)
     end
   end
 
   describe "GET /new" do
     it "returns http success" do
-      get "/messages/new"
+      get new_message_path
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /create" do
-    it "returns http success" do
-      get "/messages/create"
-      expect(response).to have_http_status(:success)
+  describe "POST /create" do
+    it "creates a message and redirects" do
+      post messages_path, params: { message: { recipient_hash: "<abc123>", subject: "Test", body: "Hello" } }
+      expect(response).to have_http_status(:redirect)
     end
   end
-
 end

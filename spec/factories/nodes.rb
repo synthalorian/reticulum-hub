@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :node do
-    destination_hash { "MyString" }
-    name { "MyString" }
+    sequence(:destination_hash) { |n| "<node#{n}>" }
+    name { "Test Node" }
     hops { 1 }
-    last_seen { "2026-05-30 22:33:50" }
-    services { "" }
-    metadata { "" }
+    last_seen { 5.minutes.ago }
+    services { [] }
+    metadata { {} }
   end
 end
