@@ -1,4 +1,62 @@
-<div>
-  <h1 class="font-bold text-4xl">Alerts#show</h1>
-  <p>Find me in app/views/alerts/show.html.erb</p>
+<div class="mb-6">
+  <%= link_to alerts_path, class: "text-sm text-gray-400 hover:text-white flex items-center" do %>
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to alerts
+  <% end %>
+</div>
+
+<div class="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-3xl">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center space-x-3">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @alert.severity_badge_class %>">
+        <%= @alert.severity %>
+      </span>
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+        <%= @alert.status == 'active' ? 'bg-red-900/50 text-red-400' : @alert.status == 'acknowledged' ? 'bg-yellow-900/50 text-yellow-400' : 'bg-green-900/50 text-green-400' %>">
+        <%= @alert.status %>
+      </span>
+    </div>
+    <p class="text-xs text-gray-500"><%= @alert.triggered_at&.strftime("%Y-%m-%d %H:%M:%S") || "—" %></p>
+  </div>
+
+  <h1 class="text-xl font-bold text-white mb-4"><%= @alert.message %></h1>
+
+  <% if @alert.details.present? %>
+    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700 mb-6">
+      <h3 class="text-sm font-medium text-gray-400 mb-2">Details</h3>
+      <pre class="text-xs text-gray-300 font-mono overflow-x-auto"><%= JSON.pretty_generate(@alert.details) %></pre>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+      <h3 class="text-sm font-medium text-gray-400 mb-2">Alert Rule</h3>
+      <p class="text-sm text-white"><%= @alert.alert_rule&.name || "Unknown" %></p>
+    </div>
+    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+      <h3 class="text-sm font-medium text-gray-400 mb-2">Triggered</h3>
+      <p class="text-sm text-white"><%= @alert.triggered_at&.strftime("%Y-%m-%d %H:%M:%S") || "—" %></p>
+    </div>
+    <% if @alert.acknowledged_at %>
+      <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Acknowledged</h3>
+        <p class="text-sm text-white"><%= @alert.acknowledged_at.strftime("%Y-%m-%d %H:%M:%S") %></p>
+      </div>
+    <% end %>
+    <% if @alert.resolved_at %>
+      <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Resolved</h3>
+        <p class="text-sm text-white"><%= @alert.resolved_at.strftime("%Y-%m-%d %H:%M:%S") %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex items-center space-x-3">
+    <% if @alert.status == 'active' %>
+      <%= button_to "Acknowledge", acknowledge_alert_path(@alert), method: :post, class: "px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition" %>
+    <% end %>
+    <% if @alert.status != 'resolved' %>
+      <%= button_to "Resolve", resolve_alert_path(@alert), method: :post, class: "px-4 py-2 bg-green-900/50 hover:bg-green-900 text-green-400 text-sm font-medium rounded-lg transition" %>
+    <% end %>
+  </div>
 </div>

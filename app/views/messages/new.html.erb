@@ -2,44 +2,59 @@
   <h1 class="text-2xl font-bold text-white">Compose Message</h1>
 </div>
 
-<div class="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-2xl">
-  <%= form_with model: @message, class: "space-y-6" do |f| %>
-    <% if @message.errors.any? %>
-      <div class="bg-red-900/50 border border-red-700 rounded-lg p-4">
-        <ul class="text-red-300 text-sm list-disc list-inside">
-          <% @message.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-        </ul>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="lg:col-span-2">
+    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+      <%= form_with model: @message, class: "space-y-6" do |f| %>
+        <% if @message.errors.any? %>
+          <div class="bg-red-900/50 border border-red-700 rounded-lg p-4">
+            <ul class="text-red-300 text-sm list-disc list-inside">
+              <% @message.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :recipient_hash, "To", class: "block text-sm font-medium text-gray-300 mb-2" %>
+          <%= f.select :recipient_hash,
+                options_for_select([["— Select peer —", ""]] + @peers, params.dig(:message, :recipient_hash)),
+                {},
+                class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent" %>
+        </div>
+
+        <div>
+          <%= f.label :subject, class: "block text-sm font-medium text-gray-300 mb-2" %>
+          <%= f.text_field :subject,
+                class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent",
+                placeholder: "Message subject" %>
+        </div>
+
+        <div>
+          <%= f.label :body, class: "block text-sm font-medium text-gray-300 mb-2" %>
+          <%= f.text_area :body, rows: 8,
+                class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent",
+                placeholder: "Type your message..." %>
+        </div>
+
+        <div class="flex items-center justify-end space-x-3">
+          <%= link_to "Cancel", messages_path, class: "px-4 py-2 text-gray-400 hover:text-white text-sm font-medium" %>
+          <%= f.submit "Send Message",
+                class: "px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+      <h3 class="text-sm font-medium text-gray-400 mb-4">Quick Tips</h3>
+      <div class="space-y-3 text-sm text-gray-500">
+        <p>Messages are sent via the Reticulum LXMF protocol.</p>
+        <p>Delivery is not guaranteed — the recipient must be reachable on the network.</p>
+        <p>Messages are stored locally for your reference.</p>
       </div>
-    <% end %>
-
-    <div>
-      <%= f.label :recipient_hash, "To", class: "block text-sm font-medium text-gray-300 mb-2" %>
-      <%= f.select :recipient_hash,
-            options_for_select([["— Select peer —", ""]] + @peers),
-            {},
-            class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent" %>
     </div>
-
-    <div>
-      <%= f.label :subject, class: "block text-sm font-medium text-gray-300 mb-2" %>
-      <%= f.text_field :subject,
-            class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent",
-            placeholder: "Message subject" %>
-    </div>
-
-    <div>
-      <%= f.label :body, class: "block text-sm font-medium text-gray-300 mb-2" %>
-      <%= f.text_area :body, rows: 8,
-            class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent",
-            placeholder: "Type your message..." %>
-    </div>
-
-    <div class="flex items-center justify-end space-x-3">
-      <%= link_to "Cancel", messages_path, class: "px-4 py-2 text-gray-400 hover:text-white text-sm font-medium" %>
-      <%= f.submit "Send Message",
-            class: "px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition" %>
-    </div>
-  <% end %>
+  </div>
 </div>

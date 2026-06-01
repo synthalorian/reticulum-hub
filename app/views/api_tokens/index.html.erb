@@ -1,0 +1,75 @@
+<div class="p-6 max-w-5xl mx-auto">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white">API Tokens</h1>
+      <p class="text-sm text-gray-400 mt-1">Manage access tokens for third-party integrations</p>
+    </div>
+  </div>
+
+  <% if @new_token %>
+    <div class="mb-6 p-4 bg-cyan-900/30 border border-cyan-700 rounded-lg">
+      <p class="text-sm text-cyan-400 font-semibold mb-2">New token created — copy it now:</p>
+      <code class="block bg-gray-900 p-3 rounded text-cyan-300 font-mono text-sm break-all"><%= @new_token %></code>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-white mb-4">Create Token</h2>
+      <%= form_with model: ApiToken.new, url: api_tokens_path, class: "space-y-4" do |f| %>
+        <div>
+          <%= f.label :name, class: "block text-sm font-medium text-gray-400 mb-1" %>
+          <%= f.text_field :name, placeholder: "e.g. Grafana Integration", class: "w-full bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2" %>
+        </div>
+        <div>
+          <%= f.label :scopes, class: "block text-sm font-medium text-gray-400 mb-1" %>
+          <%= f.select :scopes, options_for_select([["Read Only", "read"], ["Read + Write", "read_write"]]), {}, class: "w-full bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2" %>
+        </div>
+        <div>
+          <%= f.label :expires_at, class: "block text-sm font-medium text-gray-400 mb-1" %>
+          <%= f.datetime_local_field :expires_at, class: "w-full bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2" %>
+        </div>
+        <%= f.submit "Create Token", class: "w-full px-4 py-2 bg-cyan-900/30 text-cyan-400 border border-cyan-700 rounded-lg hover:bg-cyan-900/50 transition-colors" %>
+      <% end %>
+    </div>
+
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-white mb-4">Usage</h2>
+      <div class="space-y-3 text-sm text-gray-400">
+        <p>Include the token in the <code class="bg-gray-900 px-1 rounded">Authorization</code> header:</p>
+        <code class="block bg-gray-900 p-3 rounded text-xs font-mono text-cyan-300">Authorization: Bearer &lt;token&gt;</code>
+        <p class="text-xs text-gray-500">Tokens are hashed before storage. Only shown once at creation.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-900">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Name</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Scopes</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Last Used</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Expires</th>
+          <th class="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700">
+        <% @tokens.each do |token| %>
+          <tr class="hover:bg-gray-700/50">
+            <td class="px-4 py-3 text-gray-300"><%= token.name %></td>
+            <td class="px-4 py-3"><span class="px-2 py-0.5 text-xs bg-gray-700 rounded text-gray-300"><%= token.scopes %></span></td>
+            <td class="px-4 py-3 text-gray-400"><%= token.last_used_at&.strftime("%Y-%m-%d %H:%M") || "Never" %></td>
+            <td class="px-4 py-3 text-gray-400"><%= token.expires_at&.strftime("%Y-%m-%d") || "Never" %></td>
+            <td class="px-4 py-3 text-right">
+              <%= button_to "Revoke", api_token_path(token), method: :delete, class: "text-red-400 hover:text-red-300 text-xs", data: { turbo_confirm: "Revoke this token?" } %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @tokens.empty? %>
+          <tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No tokens yet.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

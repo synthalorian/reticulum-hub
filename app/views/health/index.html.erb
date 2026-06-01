@@ -1,0 +1,55 @@
+<div class="p-6 max-w-5xl mx-auto">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white">System Health</h1>
+      <p class="text-sm text-gray-400 mt-1">Real-time status of all dependencies</p>
+    </div>
+    <div class="flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg">
+      <div class="w-3 h-3 rounded-full <%= @overall == 'ok' ? 'bg-green-500' : @overall == 'warning' ? 'bg-yellow-500' : 'bg-red-500' %>"></div>
+      <span class="text-sm font-medium <%= @overall == 'ok' ? 'text-green-400' : @overall == 'warning' ? 'text-yellow-400' : 'text-red-400' %>">
+        <%= @overall.upcase %>
+      </span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+    <% @checks.each do |name, check| %>
+      <div class="bg-gray-800 border <%= check[:status] == 'ok' ? 'border-green-700' : check[:status] == 'warning' ? 'border-yellow-700' : 'border-red-700' %> rounded-lg p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-medium text-gray-300"><%= name.to_s.titleize %></h3>
+          <span class="w-2 h-2 rounded-full <%= check[:status] == 'ok' ? 'bg-green-500' : check[:status] == 'warning' ? 'bg-yellow-500' : 'bg-red-500' %>"></span>
+        </div>
+        <p class="text-lg font-semibold <%= check[:status] == 'ok' ? 'text-green-400' : check[:status] == 'warning' ? 'text-yellow-400' : 'text-red-400' %>">
+          <%= check[:message] %>
+        </p>
+        <% if check[:used_percent] %>
+          <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5">
+            <div class="bg-<%= check[:status] == 'ok' ? 'green' : check[:status] == 'warning' ? 'yellow' : 'red' %>-500 h-1.5 rounded-full" style="width: <%= check[:used_percent] %>"></div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+    <h2 class="text-lg font-semibold text-white mb-4">System Info</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+      <div>
+        <p class="text-gray-500">Uptime</p>
+        <p class="text-gray-300 font-mono"><%= distance_of_time_in_words(@uptime) %></p>
+      </div>
+      <div>
+        <p class="text-gray-500">Rails</p>
+        <p class="text-gray-300 font-mono"><%= Rails.version %></p>
+      </div>
+      <div>
+        <p class="text-gray-500">Ruby</p>
+        <p class="text-gray-300 font-mono"><%= RUBY_VERSION %></p>
+      </div>
+      <div>
+        <p class="text-gray-500">Environment</p>
+        <p class="text-gray-300 font-mono"><%= Rails.env %></p>
+      </div>
+    </div>
+  </div>
+</div>

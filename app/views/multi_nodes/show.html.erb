@@ -1,0 +1,75 @@
+<div class="mb-6">
+  <%= link_to multi_nodes_path, class: "text-sm text-gray-400 hover:text-white flex items-center" do %>
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to nodes
+  <% end %>
+</div>
+
+<div class="mb-6 flex items-center justify-between">
+  <h1 class="text-2xl font-bold text-white"><%= @node[:name] %></h1>
+  <span class="text-xs text-gray-500 font-mono"><%= @node[:host] %>:<%= @node[:port] %></span>
+</div>
+
+<%= render "dashboard/stats_cards" %>
+
+<div class="bg-gray-800 rounded-xl border border-gray-700 mb-8">
+  <div class="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-white">Interfaces</h2>
+    <span class="text-sm text-gray-400"><%= @interfaces.size %> total</span>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
+    <% @interfaces.each do |iface| %>
+      <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-medium text-white"><%= iface[:name] %></h3>
+          <% status_color = case iface[:status]; when 'up' then 'green'; when 'down' then 'gray'; when 'error' then 'red'; else 'yellow'; end %>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-<%= status_color %>-100 text-<%= status_color %>-800">
+            <%= iface[:status] %>
+          </span>
+        </div>
+        <p class="text-xs text-gray-400 mb-3"><%= iface[:interface_type] %></p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between text-gray-400">
+            <span>Bandwidth</span>
+            <span class="text-gray-300">↓<%= iface[:bandwidth_in] || 0 %> ↑<%= iface[:bandwidth_out] || 0 %></span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-gray-800 rounded-xl border border-gray-700">
+  <div class="px-6 py-4 border-b border-gray-700">
+    <h2 class="text-lg font-semibold text-white">Peers</h2>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-gray-750 text-gray-400 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3">Name</th>
+          <th class="px-6 py-3">Hash</th>
+          <th class="px-6 py-3">Hops</th>
+          <th class="px-6 py-3">Quality</th>
+          <th class="px-6 py-3">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700">
+        <% @peers.each do |peer| %>
+          <tr class="hover:bg-gray-750">
+            <td class="px-6 py-4 font-medium text-white"><%= peer[:name] || "Unknown" %></td>
+            <td class="px-6 py-4 text-gray-400 font-mono text-xs"><%= peer[:destination_hash] %></td>
+            <td class="px-6 py-4 text-gray-300"><%= peer[:hops] || 0 %></td>
+            <td class="px-6 py-4 text-gray-300"><%= ((peer[:link_quality] || 0) * 100).round %>%</td>
+            <td class="px-6 py-4">
+              <% color = case peer[:status]; when 'active' then 'green'; when 'degraded' then 'yellow'; when 'offline' then 'red'; else 'gray'; end %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-<%= color %>-100 text-<%= color %>-800">
+                <%= peer[:status] %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

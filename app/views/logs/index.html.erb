@@ -1,0 +1,88 @@
+<div class="p-6 max-w-7xl mx-auto" data-controller="log-stream">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Live Logs</h1>
+      <p class="text-sm text-gray-400 mt-1">Real-time log streaming from rnsd and system</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg">
+        <div data-log-stream-target="indicator" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+        <span data-log-stream-target="statusText" class="text-xs text-gray-400">Live</span>
+      </div>
+      <%= button_to "Clear", clear_logs_path(source: params[:source]), method: :delete,
+            class: "px-3 py-1.5 text-xs bg-red-900/30 text-red-400 border border-red-700 rounded-lg hover:bg-red-900/50 transition-colors",
+            data: { turbo_confirm: "Clear all logs?" } %>
+    </div>
+  </div>
+
+  <%# Filters %>
+  <div class="flex flex-wrap items-center gap-3 mb-4 p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
+    <%= form_with url: logs_path, method: :get, class: "flex flex-wrap items-center gap-3", data: { turbo_frame: "logs_table" } do |f| %>
+      <div class="flex items-center gap-2">
+        <%= f.select :source,
+              options_for_select([["All Sources", ""]] + @sources.map { |s| [s.titleize, s] }, params[:source]),
+              {}, class: "bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" %>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <%= f.select :level,
+              options_for_select([["All Levels", ""]] + @levels.map { |l| [l.upcase, l] }, params[:level]),
+              {}, class: "bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" %>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <%= f.select :since,
+              options_for_select([
+                ["All Time", ""],
+                ["Last 5 min", "5"],
+                ["Last 15 min", "15"],
+                ["Last 1 hour", "60"],
+                ["Last 24 hours", "1440"]
+              ], params[:since]),
+              {}, class: "bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" %>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <%= f.text_field :q, value: params[:q], placeholder: "Search logs...",
+              class: "bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1.5 w-48 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" %>
+      </div>
+
+      <%= f.submit "Filter", class: "px-3 py-1.5 text-sm bg-cyan-900/30 text-cyan-400 border border-cyan-700 rounded-lg hover:bg-cyan-900/50 transition-colors" %>
+      <%= link_to "Clear", logs_path, class: "px-3 py-1.5 text-sm text-gray-400 hover:text-white transition-colors" %>
+    <% end %>
+  </div>
+
+  <%# Log table %>
+  <%= turbo_frame_tag "logs_table" do %>
+    <div class="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+      <div class="overflow-x-auto max-h-[600px] overflow-y-auto" data-log-stream-target="container">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-900 sticky top-0 z-10">
+            <tr>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Time</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-20">Level</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-24">Source</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Message</th>
+            </tr>
+          </thead>
+          <tbody data-log-stream-target="tbody" class="divide-y divide-gray-700">
+            <% @logs.each do |log| %>
+              <tr class="hover:bg-gray-700/50 transition-colors">
+                <td class="px-4 py-2 text-gray-400 whitespace-nowrap font-mono text-xs">
+                  <%= log.timestamp.strftime("%H:%M:%S.%L") %>
+                </td>
+                <td class="px-4 py-2">
+                  <span class="inline-flex px-2 py-0.5 text-xs font-medium border rounded <%= log.badge_class %>">
+                    <%= log.level.upcase %>
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-gray-400 whitespace-nowrap"><%= log.source %></td>
+                <td class="px-4 py-2 <%= log.color_class %>"><%= log.message %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,26 +1,69 @@
-// Add a service worker for processing Web Push notifications:
-//
-// self.addEventListener("push", async (event) => {
-//   const { title, options } = await event.data.json()
-//   event.waitUntil(self.registration.showNotification(title, options))
-// })
-//
-// self.addEventListener("notificationclick", function(event) {
-//   event.notification.close()
-//   event.waitUntil(
-//     clients.matchAll({ type: "window" }).then((clientList) => {
-//       for (let i = 0; i < clientList.length; i++) {
-//         let client = clientList[i]
-//         let clientPath = (new URL(client.url)).pathname
-//
-//         if (clientPath == event.notification.data.path && "focus" in client) {
-//           return client.focus()
-//         }
-//       }
-//
-//       if (clients.openWindow) {
-//         return clients.openWindow(event.notification.data.path)
-//       }
-//     })
-//   )
-// })
+// Reticulum Hub Service Worker
+const CACHE_NAME = "reticulum-hub-v1";
+const STATIC_ASSETS = [
+  "/",
+  "/dashboard",
+  "/messages",
+  "/interfaces",
+  "/explorer",
+  "/alerts"
+];
+
+// Install: cache static assets
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS);
+    })
+  );
+  self.skipWaiting();
+});
+
+// Activate: clean old caches
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames
+          .filter((name) => name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// Fetch: cache-first for static assets, network-first for API
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip non-GET requests
+  if (request.method !== "GET") return;
+
+  // API requests: network first, fallback to cache
+  if (url.pathname.startsWith("/api/")) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Static assets: cache first, fallback to network
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
+      return fetch(request).then((response) => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+        return response;
+      });
+    })
+  );
+});
