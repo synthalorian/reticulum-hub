@@ -1,0 +1,76 @@
+<div class="p-6 max-w-5xl mx-auto">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Backups</h1>
+      <p class="text-sm text-gray-400 mt-1">Database export, import, and scheduled backups</p>
+    </div>
+    <%= button_to "Create Backup", backups_path, method: :post,
+          class: "px-4 py-2 bg-cyan-900/30 text-cyan-400 border border-cyan-700 rounded-lg hover:bg-cyan-900/50 transition-colors" %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <%# Restore %>
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-white mb-4">Restore from File</h2>
+      <%= form_with url: restore_backups_path, method: :post, multipart: true do |f| %>
+        <div class="mb-4">
+          <%= f.file_field :backup_file, accept: ".sql", class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-gray-700 file:text-gray-300 hover:file:bg-gray-600" %>
+        </div>
+        <p class="text-xs text-yellow-400 mb-4">Warning: This will overwrite the current database. A safety backup is created automatically.</p>
+        <%= f.submit "Restore", class: "px-4 py-2 bg-red-900/30 text-red-400 border border-red-700 rounded-lg hover:bg-red-900/50 transition-colors", data: { turbo_confirm: "Overwrite current database?" } %>
+      <% end %>
+    </div>
+
+    <%# Auto-backup settings %>
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-white mb-4">Auto-Backup</h2>
+      <div class="space-y-3 text-sm text-gray-400">
+        <div class="flex items-center justify-between">
+          <span>Daily backup</span>
+          <span class="text-cyan-400">Enabled</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Retention</span>
+          <span class="text-cyan-400">30 days</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Location</span>
+          <code class="text-xs bg-gray-900 px-2 py-1 rounded">backups/</code>
+        </div>
+      </div>
+      <p class="text-xs text-gray-500 mt-4">Configure via cron or systemd timer for production.</p>
+    </div>
+  </div>
+
+  <%# Backup list %>
+  <div class="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-900">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Name</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Size</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Created</th>
+          <th class="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700">
+        <% @backups.each do |backup| %>
+          <tr class="hover:bg-gray-700/50">
+            <td class="px-4 py-3 text-gray-300 font-mono text-xs"><%= backup[:name] %></td>
+            <td class="px-4 py-3 text-gray-400"><%= number_to_human_size(backup[:size]) %></td>
+            <td class="px-4 py-3 text-gray-400"><%= backup[:created].strftime("%Y-%m-%d %H:%M") %></td>
+            <td class="px-4 py-3 text-right space-x-2">
+              <%= link_to "Download", download_backup_path(name: backup[:name]), class: "text-cyan-400 hover:text-cyan-300 text-xs" %>
+              <%= button_to "Delete", backup_path(name: backup[:name]), method: :delete, class: "text-red-400 hover:text-red-300 text-xs inline", data: { turbo_confirm: "Delete this backup?" } %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @backups.empty? %>
+          <tr>
+            <td colspan="4" class="px-4 py-8 text-center text-gray-500">No backups yet. Click "Create Backup" to get started.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

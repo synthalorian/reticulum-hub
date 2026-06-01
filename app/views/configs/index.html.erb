@@ -1,0 +1,30 @@
+<div class="mb-6 flex items-center justify-between">
+  <h1 class="text-2xl font-bold text-white">Reticulum Config</h1>
+  <div class="flex items-center space-x-3">
+    <%= link_to export_configs_path, class: "inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition" do %>
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Export JSON
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+    <h2 class="text-lg font-semibold text-white mb-4">Current Config</h2>
+    <pre class="text-xs text-gray-300 font-mono overflow-x-auto bg-gray-900 rounded-lg p-4"><%= JSON.pretty_generate(@config) %></pre>
+  </div>
+
+  <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+    <h2 class="text-lg font-semibold text-white mb-4">Import Config</h2>
+    <%= form_with url: import_configs_path, multipart: true, class: "space-y-4" do |f| %>
+      <div>
+        <%= f.label :file, "JSON Config File", class: "block text-sm font-medium text-gray-300 mb-2" %>
+        <%= f.file_field :file, accept: ".json",
+              class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-cyan-600 file:text-white hover:file:bg-cyan-700" %>
+      </div>
+      <p class="text-xs text-gray-500">Upload a previously exported Reticulum config JSON file. The config will be validated but must be applied manually to ~/.reticulum/config for safety.</p>
+      <%= f.submit "Validate & Import",
+            class: "px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition" %>
+    <% end %>
+  </div>
+</div>

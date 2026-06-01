@@ -1,0 +1,113 @@
+/*
+ * Synthwave '84 Theme for Reticulum Hub
+ * Palette: #240037 (deep purple), #8F00FF (electric purple),
+ *          #F3E70F (neon yellow), #FF7EDB (hot pink), #FF00FF (magenta)
+ */
+
+@layer theme {
+  :root {
+    --sw-bg-deep: #240037;
+    --sw-bg-panel: #1a0b2e;
+    --sw-bg-card: #2d0b4e;
+    --sw-border: #4a148c;
+    --sw-electric: #8F00FF;
+    --sw-neon-yellow: #F3E70F;
+    --sw-hot-pink: #FF7EDB;
+    --sw-magenta: #FF00FF;
+    --sw-cyan: #00f0ff;
+    --sw-text: #e0d4f0;
+    --sw-text-muted: #9b7bb8;
+    --sw-green: #39ff14;
+    --sw-red: #ff2a6d;
+    --sw-yellow: #ffee00;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--sw-bg-deep) !important;
+    color: var(--sw-text) !important;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  /* Override Tailwind gray classes with synthwave palette */
+  .bg-gray-900 { background-color: var(--sw-bg-deep) !important; }
+  .bg-gray-800 { background-color: var(--sw-bg-panel) !important; }
+  .bg-gray-750 { background-color: var(--sw-bg-card) !important; }
+  .bg-gray-700 { background-color: #3d1a6b !important; }
+  .border-gray-700 { border-color: var(--sw-border) !important; }
+  .border-gray-600 { border-color: #5e2a8a !important; }
+  .text-gray-100 { color: var(--sw-text) !important; }
+  .text-gray-300 { color: #c8b8e0 !important; }
+  .text-gray-400 { color: var(--sw-text-muted) !important; }
+  .text-gray-500 { color: #7a5a9a !important; }
+  .text-white { color: #fff !important; }
+
+  /* Neon accent replacements */
+  .text-cyan-400 { color: var(--sw-cyan) !important; }
+  .text-cyan-500 { color: var(--sw-cyan) !important; }
+  .text-green-400 { color: var(--sw-green) !important; }
+  .text-green-500 { color: var(--sw-green) !important; }
+  .text-yellow-400 { color: var(--sw-yellow) !important; }
+  .text-red-400 { color: var(--sw-red) !important; }
+
+  .bg-cyan-500 { background-color: var(--sw-electric) !important; }
+  .bg-cyan-600 { background-color: var(--sw-electric) !important; }
+  .bg-cyan-700 { background-color: #6a00cc !important; }
+  .hover\:bg-cyan-700:hover { background-color: #6a00cc !important; }
+
+  .bg-green-500 { background-color: var(--sw-green) !important; }
+  .bg-green-900\/50 { background-color: rgba(57, 255, 20, 0.15) !important; }
+  .bg-red-900\/50 { background-color: rgba(255, 42, 109, 0.15) !important; }
+  .bg-yellow-900\/50 { background-color: rgba(255, 238, 0, 0.15) !important; }
+
+  /* Neon glow effects */
+  .text-cyan-400,
+  .text-green-400,
+  .text-yellow-400,
+  .text-red-400 {
+    text-shadow: 0 0 8px currentColor;
+  }
+
+  /* Sidebar header */
+  aside .text-cyan-400 {
+    color: var(--sw-neon-yellow) !important;
+    text-shadow: 0 0 12px var(--sw-neon-yellow), 0 0 24px var(--sw-neon-yellow);
+    letter-spacing: 0.15em;
+  }
+
+  /* Status badges with glow */
+  .bg-green-100 { background-color: rgba(57, 255, 20, 0.2) !important; }
+  .text-green-800 { color: var(--sw-green) !important; }
+  .bg-yellow-100 { background-color: rgba(255, 238, 0, 0.2) !important; }
+  .text-yellow-800 { color: var(--sw-yellow) !important; }
+  .bg-red-100 { background-color: rgba(255, 42, 109, 0.2) !important; }
+  .text-red-800 { color: var(--sw-red) !important; }
+  .bg-gray-100 { background-color: rgba(155, 123, 184, 0.2) !important; }
+  .text-gray-800 { color: var(--sw-text-muted) !important; }
+
+  /* Focus rings */
+  .focus\:ring-cyan-500:focus {
+    --tw-ring-color: var(--sw-electric) !important;
+    box-shadow: 0 0 0 2px var(--sw-electric), 0 0 12px var(--sw-electric) !important;
+  }
+
+  /* Buttons */
+  .bg-cyan-600,
+  .bg-cyan-600:hover {
+    background: linear-gradient(135deg, var(--sw-electric), var(--sw-magenta)) !important;
+    border: 1px solid var(--sw-hot-pink);
+    box-shadow: 0 0 8px rgba(143, 0, 255, 0.4);
+  }
+
+  /* Table hover */
+  .hover\:bg-gray-750:hover {
+    background-color: #3d1a6b !important;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--sw-bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--sw-border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--sw-electric); }
+}

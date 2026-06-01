@@ -41,6 +41,61 @@ Rails.application.routes.draw do
   # Announces
   resources :announces, only: [:index, :create]
 
+  # Settings
+  get "settings", to: "settings#index"
+  patch "settings", to: "settings#update"
+
+  # Config
+  resources :configs, only: [:index] do
+    collection do
+      get :export
+      post :import
+    end
+  end
+
+  # Multi-node
+  resources :multi_nodes, only: [:index, :show]
+
+  # Logs
+  resources :logs, only: [:index] do
+    collection do
+      get :stream
+      delete :clear
+    end
+  end
+  # Health
+  get "health", to: "health#index"
+  get "health/check", to: "health#check"
+
+  # Retention
+  resources :retention, only: [:index] do
+    collection do
+      post :cleanup
+    end
+  end
+
+  # API Tokens
+  resources :api_tokens, only: [:index, :create, :destroy]
+
+  # Backups
+  resources :backups, only: [:index, :create, :destroy] do
+    collection do
+      post :restore
+      get :download
+    end
+  end
+
+  # Maps
+  resources :maps, only: [:index]
+
+  # Metrics
+  resources :metrics, only: [:index] do
+    collection do
+      get :peer
+      get :interface
+    end
+  end
+
   # API namespace for AJAX / WebSocket fallback
   namespace :api do
     get "status", to: "status#index"

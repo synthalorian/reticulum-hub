@@ -11,13 +11,14 @@
     <% @conversations.each do |key, messages| %>
       <% latest = messages.first %>
       <% peer = Peer.find_by(destination_hash: latest.sender_hash) || Peer.find_by(destination_hash: latest.recipient_hash) %>
+      <% unread_count = messages.count { |m| !m.read } %>
       <%= link_to message_path(latest), class: "block px-6 py-4 border-b border-gray-700 hover:bg-gray-750 last:border-b-0" do %>
         <div class="flex items-start justify-between">
           <div class="flex-1 min-w-0">
             <div class="flex items-center mb-1">
               <h3 class="text-sm font-medium text-white truncate"><%= peer&.name || latest.sender_hash %></h3>
-              <% unless latest.read %>
-                <span class="ml-2 w-2 h-2 bg-cyan-500 rounded-full"></span>
+              <% if unread_count > 0 %>
+                <span class="ml-2 bg-cyan-500 text-gray-900 text-xs font-bold px-2 py-0.5 rounded-full"><%= unread_count %></span>
               <% end %>
             </div>
             <p class="text-sm text-gray-400 truncate"><%= latest.subject || "(no subject)" %></p>

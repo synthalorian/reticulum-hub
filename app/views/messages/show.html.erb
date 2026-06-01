@@ -5,26 +5,82 @@
   <% end %>
 </div>
 
-<div class="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-3xl">
-  <div class="border-b border-gray-700 pb-4 mb-4">
-    <h1 class="text-xl font-bold text-white mb-1"><%= @message.subject || "(no subject)" %></h1>
-    <div class="flex items-center text-sm text-gray-400">
-      <span class="font-mono"><%= @message.sender_hash %></span>
-      <span class="mx-2">→</span>
-      <span class="font-mono"><%= @message.recipient_hash %></span>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <%# Conversation thread %>
+  <div class="lg:col-span-2">
+    <div class="bg-gray-800 rounded-xl border border-gray-700">
+      <%# Header %>
+      <div class="px-6 py-4 border-b border-gray-700">
+        <h1 class="text-xl font-bold text-white mb-1"><%= @message.subject || "(no subject)" %></h1>
+        <div class="flex items-center text-sm text-gray-400">
+          <span class="font-mono"><%= @message.sender_hash %></span>
+          <span class="mx-2">→</span>
+          <span class="font-mono"><%= @message.recipient_hash %></span>
+        </div>
+      </div>
+
+      <%# Message body %>
+      <div class="p-6">
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-full bg-cyan-900/50 flex items-center justify-center flex-shrink-0">
+            <span class="text-xs text-cyan-400 font-bold"><%= @message.sender_hash.to_s[1..2].upcase %></span>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-medium text-white"><%= @message.sender_hash %></span>
+              <span class="text-xs text-gray-500"><%= @message.sent_at&.strftime("%Y-%m-%d %H:%M:%S") || "—" %></span>
+            </div>
+            <div class="prose prose-invert max-w-none">
+              <p class="text-gray-300 whitespace-pre-wrap"><%= @message.body %></p>
+            </div>
+            <div class="mt-3 flex items-center space-x-2">
+              <span class="text-xs text-gray-500">Status: <span class="text-gray-300"><%= @message.status_icon %></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# Reply form %>
+      <div class="px-6 py-4 border-t border-gray-700">
+        <%= form_with model: Message.new, url: messages_path, class: "space-y-4" do |f| %>
+          <%= f.hidden_field :recipient_hash, value: @message.sender_hash %>
+          <%= f.hidden_field :subject, value: "Re: #{@message.subject}" %>
+          <div>
+            <%= f.text_area :body, rows: 3,
+                  class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent",
+                  placeholder: "Write a reply..." %>
+          </div>
+          <div class="flex justify-end">
+            <%= f.submit "Send Reply",
+                  class: "px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition" %>
+          </div>
+        <% end %>
+      </div>
     </div>
-    <p class="text-xs text-gray-500 mt-1"><%= @message.sent_at&.strftime("%Y-%m-%d %H:%M:%S") || "—" %></p>
   </div>
 
-  <div class="prose prose-invert max-w-none">
-    <p class="text-gray-300 whitespace-pre-wrap"><%= @message.body %></p>
-  </div>
-
-  <div class="mt-6 pt-4 border-t border-gray-700 flex items-center justify-between">
-    <div class="text-sm text-gray-500">
-      Status: <span class="text-gray-300"><%= @message.status_icon %></span>
+  <%# Sidebar: conversation info %>
+  <div>
+    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+      <h3 class="text-sm font-medium text-gray-400 mb-4">Conversation</h3>
+      <div class="space-y-3">
+        <div>
+          <p class="text-xs text-gray-500">From</p>
+          <p class="text-sm text-white font-mono"><%= @message.sender_hash %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">To</p>
+          <p class="text-sm text-white font-mono"><%= @message.recipient_hash %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Sent</p>
+          <p class="text-sm text-white"><%= @message.sent_at&.strftime("%Y-%m-%d %H:%M") || "—" %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Direction</p>
+          <p class="text-sm text-white"><%= @message.direction %></p>
+        </div>
+      </div>
     </div>
-    <%= link_to "Reply", new_message_path(message: { recipient_hash: @message.sender_hash }),
-          class: "px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition" %>
   </div>
 </div>

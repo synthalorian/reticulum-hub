@@ -36,6 +36,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_31_023354) do
     t.index ["alert_rule_id"], name: "index_alerts_on_alert_rule_id"
   end
 
+  create_table "api_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.datetime "last_used_at"
+    t.string "name", null: false
+    t.string "scopes", default: "read"
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token_digest"], name: "index_api_tokens_on_token_digest", unique: true
+  end
+
   create_table "interfaces", force: :cascade do |t|
     t.integer "bandwidth_in"
     t.integer "bandwidth_out"
@@ -51,6 +62,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_31_023354) do
     t.integer "uptime"
   end
 
+  create_table "logs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "level", default: "info", null: false
+    t.text "message", null: false
+    t.text "metadata"
+    t.string "source", default: "rnsd", null: false
+    t.datetime "timestamp", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", null: false
+    t.index ["source", "level"], name: "index_logs_on_source_and_level"
+    t.index ["timestamp"], name: "index_logs_on_timestamp"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -63,6 +86,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_31_023354) do
     t.datetime "sent_at"
     t.string "subject"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "network_metrics", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "interface_name"
+    t.json "metadata"
+    t.string "metric_type", null: false
+    t.string "peer_hash"
+    t.datetime "timestamp", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", null: false
+    t.float "value", null: false
+    t.index ["interface_name"], name: "index_network_metrics_on_interface_name"
+    t.index ["metric_type", "timestamp"], name: "index_network_metrics_on_metric_type_and_timestamp"
+    t.index ["peer_hash", "timestamp"], name: "index_network_metrics_on_peer_hash_and_timestamp"
   end
 
   create_table "nodes", force: :cascade do |t|
@@ -81,11 +118,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_31_023354) do
     t.string "destination_hash"
     t.integer "hops"
     t.datetime "last_seen"
+    t.float "latitude"
     t.float "link_quality"
+    t.string "location_name"
+    t.float "longitude"
     t.json "metadata"
     t.string "name"
     t.string "status"
     t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_peers_on_latitude_and_longitude"
   end
 
   create_table "services", force: :cascade do |t|

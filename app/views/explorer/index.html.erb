@@ -7,8 +7,17 @@
   <div class="lg:col-span-2">
     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
       <h2 class="text-lg font-semibold text-white mb-4">Topology</h2>
-      <div id="topology-map" class="h-96 bg-gray-900 rounded-lg flex items-center justify-center">
-        <p class="text-gray-500 text-sm">Topology visualization coming in v1.1</p>
+      <div id="topology-map" class="h-96 bg-gray-900 rounded-lg relative overflow-hidden"
+           data-controller="topology-map"
+           data-topology-map-nodes-value="<%= @network_map[:nodes].to_json %>"
+           data-topology-map-edges-value="<%= @network_map[:edges].to_json %>">
+        <canvas data-topology-map-target="canvas" class="absolute inset-0 w-full h-full"></canvas>
+      </div>
+      <div class="mt-3 flex items-center space-x-4 text-xs text-gray-500">
+        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-cyan-400 mr-1"></span> Local</span>
+        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-1"></span> Active</span>
+        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-yellow-500 mr-1"></span> Degraded</span>
+        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 mr-1"></span> Offline</span>
       </div>
     </div>
   </div>

@@ -1,51 +1,36 @@
-# See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
+# Ignore git and CI files
+.git
+.gitignore
+.github
 
-# Ignore git directory.
-/.git/
-/.gitignore
+# Ignore Ruby environment files
+.ruby-version
+.rbenv-vars
 
-# Ignore bundler config.
-/.bundle
+# Ignore development/test files
+spec
+test
+tmp
+log
+storage
+public/assets
+node_modules
 
-# Ignore all environment files.
-/.env*
+# Ignore editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
 
-# Ignore all default key files.
-/config/master.key
-/config/credentials/*.key
+# Ignore OS files
+.DS_Store
+Thumbs.db
 
-# Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+# Ignore local env files
+.env
+.env.*
 
-# Ignore pidfiles, but keep the directory.
-/tmp/pids/*
-!/tmp/pids/.keep
-
-# Ignore storage (uploaded files in development and any SQLite databases).
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/.keep
-
-# Ignore assets.
-/node_modules/
-/app/assets/builds/*
-!/app/assets/builds/.keep
-/public/assets
-
-# Ignore CI service files.
-/.github
-
-# Ignore Kamal files.
-/config/deploy*.yml
-/.kamal
-
-# Ignore development files
-/.devcontainer
-
-# Ignore Docker-related files
-/.dockerignore
-/Dockerfile*
+# Ignore docs
+PLAN.md
+README.md

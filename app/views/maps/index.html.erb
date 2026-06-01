@@ -1,0 +1,16 @@
+<div class="p-6 max-w-7xl mx-auto" data-controller="map" data-map-peers-value="<%= @peers_json %>">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Network Map</h1>
+      <p class="text-sm text-gray-400 mt-1">Peer geolocation and coverage</p>
+    </div>
+    <div class="text-sm text-gray-400">
+      <%= @peers.count %> peers with location data
+    </div>
+  </div>
+
+  <div data-map-target="container" class="w-full h-[600px] bg-gray-800 border border-gray-700 rounded-lg"></div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

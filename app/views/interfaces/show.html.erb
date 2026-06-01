@@ -1,4 +1,69 @@
-<div>
-  <h1 class="font-bold text-4xl">Interfaces#show</h1>
-  <p>Find me in app/views/interfaces/show.html.erb</p>
+<div class="mb-6">
+  <%= link_to interfaces_path, class: "text-sm text-gray-400 hover:text-white flex items-center" do %>
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to interfaces
+  <% end %>
+</div>
+
+<div class="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-3xl">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white"><%= @interface.name %></h1>
+      <p class="text-sm text-gray-400 mt-1"><%= @interface.interface_type %></p>
+    </div>
+    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= @interface.status_badge_class %>">
+      <%= @interface.status %>
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+      <h3 class="text-sm font-medium text-gray-400 mb-3">Traffic</h3>
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">Received</span>
+          <span class="text-sm text-white font-mono"><%= @interface.formatted_bandwidth.split(" ").first %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">Transmitted</span>
+          <span class="text-sm text-white font-mono"><%= @interface.formatted_bandwidth.split(" ").last %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">Error Rate</span>
+          <span class="text-sm text-white font-mono"><%= @interface.error_rate ? "#{(@interface.error_rate * 100).round(2)}%" : "—" %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+      <h3 class="text-sm font-medium text-gray-400 mb-3">Status</h3>
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">Uptime</span>
+          <span class="text-sm text-white font-mono"><%= @interface.formatted_uptime %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">Last Seen</span>
+          <span class="text-sm text-white"><%= @interface.last_seen ? time_ago_in_words(@interface.last_seen) + " ago" : "—" %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @interface.config.present? %>
+    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700 mb-6">
+      <h3 class="text-sm font-medium text-gray-400 mb-3">Configuration</h3>
+      <pre class="text-xs text-gray-300 font-mono overflow-x-auto"><%= JSON.pretty_generate(@interface.config) %></pre>
+    </div>
+  <% end %>
+
+  <div class="flex items-center space-x-3">
+    <%= link_to "Edit", edit_interface_path(@interface), class: "px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition" %>
+    <% if @interface.status == "up" %>
+      <%= button_to "Disable", disable_interface_path(@interface.name), method: :post, class: "px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded-lg transition" %>
+      <%= button_to "Restart", restart_interface_path(@interface.name), method: :post, class: "px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium rounded-lg transition" %>
+    <% else %>
+      <%= button_to "Enable", enable_interface_path(@interface.name), method: :post, class: "px-4 py-2 bg-green-900/50 hover:bg-green-900 text-green-400 text-sm font-medium rounded-lg transition" %>
+    <% end %>
+  </div>
 </div>

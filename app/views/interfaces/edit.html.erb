@@ -1,4 +1,50 @@
-<div>
-  <h1 class="font-bold text-4xl">Interfaces#edit</h1>
-  <p>Find me in app/views/interfaces/edit.html.erb</p>
+<div class="mb-6">
+  <%= link_to interface_path(@interface), class: "text-sm text-gray-400 hover:text-white flex items-center" do %>
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to interface
+  <% end %>
+</div>
+
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-white">Edit Interface: <%= @interface.name %></h1>
+</div>
+
+<div class="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-2xl">
+  <%= form_with model: @interface, class: "space-y-6" do |f| %>
+    <% if @interface.errors.any? %>
+      <div class="bg-red-900/50 border border-red-700 rounded-lg p-4">
+        <ul class="text-red-300 text-sm list-disc list-inside">
+          <% @interface.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :name, class: "block text-sm font-medium text-gray-300 mb-2" %>
+      <%= f.text_field :name, disabled: true,
+            class: "w-full bg-gray-750 border border-gray-600 rounded-lg px-4 py-2 text-gray-400 cursor-not-allowed" %>
+      <p class="text-xs text-gray-500 mt-1">Interface name cannot be changed.</p>
+    </div>
+
+    <div>
+      <%= f.label :interface_type, class: "block text-sm font-medium text-gray-300 mb-2" %>
+      <%= f.text_field :interface_type, disabled: true,
+            class: "w-full bg-gray-750 border border-gray-600 rounded-lg px-4 py-2 text-gray-400 cursor-not-allowed" %>
+    </div>
+
+    <div>
+      <%= f.label :config, "Configuration (JSON)", class: "block text-sm font-medium text-gray-300 mb-2" %>
+      <%= f.text_area :config, value: JSON.pretty_generate(@interface.config || {}), rows: 10,
+            class: "w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white font-mono text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent" %>
+      <p class="text-xs text-gray-500 mt-1">Edit the JSON configuration for this interface.</p>
+    </div>
+
+    <div class="flex items-center justify-end space-x-3">
+      <%= link_to "Cancel", interface_path(@interface), class: "px-4 py-2 text-gray-400 hover:text-white text-sm font-medium" %>
+      <%= f.submit "Save Changes",
+            class: "px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition" %>
+    </div>
+  <% end %>
 </div>

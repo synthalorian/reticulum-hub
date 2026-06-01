@@ -70,7 +70,7 @@ class AlertEngine
     # Deduplicate: don't create if an active alert for this rule+message exists
     return if Alert.exists?(alert_rule: rule, status: "active", message: message)
 
-    Alert.create!(
+    alert = Alert.create!(
       alert_rule: rule,
       status: "active",
       severity: severity,
@@ -78,6 +78,9 @@ class AlertEngine
       details: details,
       triggered_at: Time.current
     )
+
+    Notifiers::Dispatch.send(alert)
+    alert
   end
 
   def format_bytes(bytes)
