@@ -43,7 +43,7 @@ class MultiNodesController < ApplicationController
     end
 
     # Default: local node
-    nodes.empty? ? [local_node] : nodes
+    nodes.empty? ? [ local_node ] : nodes
   end
 
   def local_node

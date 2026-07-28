@@ -10,7 +10,7 @@ class CreateLogs < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :logs, [:source, :level]
+    add_index :logs, [ :source, :level ]
     add_index :logs, :timestamp
   end
 end

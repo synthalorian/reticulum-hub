@@ -27,8 +27,8 @@ class NetworkMap
       adjacency[edge.target] << edge.source
     end
 
-    queue = [[from_hash]]
-    visited = Set.new([from_hash])
+    queue = [ [ from_hash ] ]
+    visited = Set.new([ from_hash ])
 
     until queue.empty?
       path = queue.shift
@@ -39,7 +39,7 @@ class NetworkMap
         next if visited.include?(neighbor)
 
         visited.add(neighbor)
-        queue << (path + [neighbor])
+        queue << (path + [ neighbor ])
       end
     end
 

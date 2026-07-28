@@ -4,10 +4,10 @@ class NetworkMetric < ApplicationRecord
   validates :metric_type, presence: true, inclusion: { in: METRIC_TYPES }
   validates :value, presence: true, numericality: true
 
-  scope :by_type, ->( type) { where(metric_type: type) }
-  scope :for_peer, ->( hash) { where(peer_hash: hash) }
-  scope :for_interface, ->( name) { where(interface_name: name) }
-  scope :recent, ->( hours = 24) { where("timestamp > ?", hours.hours.ago) }
+  scope :by_type, ->(type) { where(metric_type: type) }
+  scope :for_peer, ->(hash) { where(peer_hash: hash) }
+  scope :for_interface, ->(name) { where(interface_name: name) }
+  scope :recent, ->(hours = 24) { where("timestamp > ?", hours.hours.ago) }
   scope :hourly_average, -> {
     select("strftime('%Y-%m-%d %H:00:00', timestamp) as hour, metric_type, AVG(value) as avg_value, COUNT(*) as count")
       .group("hour, metric_type")

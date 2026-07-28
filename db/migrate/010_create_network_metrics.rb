@@ -11,8 +11,8 @@ class CreateNetworkMetrics < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :network_metrics, [:metric_type, :timestamp]
-    add_index :network_metrics, [:peer_hash, :timestamp]
+    add_index :network_metrics, [ :metric_type, :timestamp ]
+    add_index :network_metrics, [ :peer_hash, :timestamp ]
     add_index :network_metrics, :interface_name
   end
 end

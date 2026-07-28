@@ -16,10 +16,10 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#index"
 
   # Messages (LXMF)
-  resources :messages, only: [:index, :show, :new, :create]
+  resources :messages, only: [ :index, :show, :new, :create ]
 
   # Interfaces
-  resources :interfaces, only: [:index, :show, :edit, :update] do
+  resources :interfaces, only: [ :index, :show, :edit, :update ] do
     member do
       post :enable
       post :disable
@@ -28,10 +28,10 @@ Rails.application.routes.draw do
   end
 
   # Network Explorer
-  resources :explorer, only: [:index, :show]
+  resources :explorer, only: [ :index, :show ]
 
   # Alerts
-  resources :alerts, only: [:index, :show] do
+  resources :alerts, only: [ :index, :show ] do
     member do
       post :acknowledge
       post :resolve
@@ -39,14 +39,14 @@ Rails.application.routes.draw do
   end
 
   # Announces
-  resources :announces, only: [:index, :create]
+  resources :announces, only: [ :index, :create ]
 
   # Settings
   get "settings", to: "settings#index"
   patch "settings", to: "settings#update"
 
   # Config
-  resources :configs, only: [:index] do
+  resources :configs, only: [ :index ] do
     collection do
       get :export
       post :import
@@ -54,10 +54,10 @@ Rails.application.routes.draw do
   end
 
   # Multi-node
-  resources :multi_nodes, only: [:index, :show]
+  resources :multi_nodes, only: [ :index, :show ]
 
   # Logs
-  resources :logs, only: [:index] do
+  resources :logs, only: [ :index ] do
     collection do
       get :stream
       delete :clear
@@ -68,17 +68,17 @@ Rails.application.routes.draw do
   get "health/check", to: "health#check"
 
   # Retention
-  resources :retention, only: [:index] do
+  resources :retention, only: [ :index ] do
     collection do
       post :cleanup
     end
   end
 
   # API Tokens
-  resources :api_tokens, only: [:index, :create, :destroy]
+  resources :api_tokens, only: [ :index, :create, :destroy ]
 
   # Backups
-  resources :backups, only: [:index, :create, :destroy] do
+  resources :backups, only: [ :index, :create, :destroy ] do
     collection do
       post :restore
       get :download
@@ -86,10 +86,10 @@ Rails.application.routes.draw do
   end
 
   # Maps
-  resources :maps, only: [:index]
+  resources :maps, only: [ :index ]
 
   # Metrics
-  resources :metrics, only: [:index] do
+  resources :metrics, only: [ :index ] do
     collection do
       get :peer
       get :interface
