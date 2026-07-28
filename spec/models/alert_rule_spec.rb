@@ -28,7 +28,7 @@ RSpec.describe AlertRule, type: :model do
     it "filters enabled rules" do
       enabled = create(:alert_rule, enabled: true)
       create(:alert_rule, enabled: false)
-      expect(AlertRule.enabled).to eq([enabled])
+      expect(AlertRule.enabled).to eq([ enabled ])
     end
   end
 

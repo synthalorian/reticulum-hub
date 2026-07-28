@@ -20,7 +20,7 @@ RSpec.describe Peer, type: :model do
     it "filters active peers" do
       active = create(:peer, status: "active")
       create(:peer, status: "offline")
-      expect(Peer.active).to eq([active])
+      expect(Peer.active).to eq([ active ])
     end
   end
 

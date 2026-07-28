@@ -7,6 +7,6 @@ FactoryBot.define do
     uptime { 86_400 }
     peer_count { 4 }
     interface_count { 3 }
-    metadata { { load_average: [0.45, 0.38, 0.42] } }
+    metadata { { load_average: [ 0.45, 0.38, 0.42 ] } }
   end
 end

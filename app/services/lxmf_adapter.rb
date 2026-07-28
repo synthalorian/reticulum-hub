@@ -113,14 +113,14 @@ class LxmfAdapter
 
   def run_python(script)
     require "tempfile"
-    
-    Tempfile.create(["lxmf_script", ".py"]) do |f|
+
+    Tempfile.create([ "lxmf_script", ".py" ]) do |f|
       f.write(script)
       f.close
-      
+
       output = `python3 #{f.path} 2>&1`
       success = $?.success?
-      
+
       { success: success, output: output, error: success ? nil : output }
     end
   end

@@ -3,7 +3,7 @@ FactoryBot.define do
     name { "Peer Down Alert" }
     condition { "peer_down" }
     threshold { 1.0 }
-    notification_channels { ["webhook"] }
+    notification_channels { [ "webhook" ] }
     enabled { true }
     metadata { {} }
   end

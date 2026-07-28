@@ -7,10 +7,10 @@ class Log < ApplicationRecord
   validates :message, presence: true
 
   scope :recent, -> { order(timestamp: :desc).limit(500) }
-  scope :by_source, ->( source) { where(source: source) }
-  scope :by_level, ->( level) { where(level: level) }
-  scope :since, ->( time) { where("timestamp > ?", time) }
-  scope :search, ->( q) { where("message LIKE ?", "%#{q}%") }
+  scope :by_source, ->(source) { where(source: source) }
+  scope :by_level, ->(level) { where(level: level) }
+  scope :since, ->(time) { where("timestamp > ?", time) }
+  scope :search, ->(q) { where("message LIKE ?", "%#{q}%") }
 
   def self.severity_color
     {

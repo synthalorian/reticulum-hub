@@ -357,15 +357,15 @@ class RnsAdapter
       uptime: 86400,
       peer_count: 4,
       interface_count: 3,
-      metadata: { load_average: [0.45, 0.38, 0.42], temperature: 42.0 }
+      metadata: { load_average: [ 0.45, 0.38, 0.42 ], temperature: 42.0 }
     }
   end
 
   def mock_nodes
     [
-      { destination_hash: "<f0a1b2c3>", name: "Field Node Alpha", hops: 1, last_seen: 2.minutes.ago, services: [{ type: "lxmf", port: 8 }, { type: "nomad", port: 42 }], metadata: {} },
-      { destination_hash: "<d4e5f6a7>", name: "Base Station", hops: 0, last_seen: 30.seconds.ago, services: [{ type: "lxmf", port: 8 }, { type: "fileshare", port: 99 }], metadata: {} },
-      { destination_hash: "<b8c9d0e1>", name: "Relay Node 1", hops: 2, last_seen: 5.minutes.ago, services: [{ type: "lxmf", port: 8 }], metadata: {} }
+      { destination_hash: "<f0a1b2c3>", name: "Field Node Alpha", hops: 1, last_seen: 2.minutes.ago, services: [ { type: "lxmf", port: 8 }, { type: "nomad", port: 42 } ], metadata: {} },
+      { destination_hash: "<d4e5f6a7>", name: "Base Station", hops: 0, last_seen: 30.seconds.ago, services: [ { type: "lxmf", port: 8 }, { type: "fileshare", port: 99 } ], metadata: {} },
+      { destination_hash: "<b8c9d0e1>", name: "Relay Node 1", hops: 2, last_seen: 5.minutes.ago, services: [ { type: "lxmf", port: 8 } ], metadata: {} }
     ]
   end
 
