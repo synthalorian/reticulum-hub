@@ -128,4 +128,4 @@ bin/rails console
 
 ## License
 
-MIT — Made by synth with synthshark 🎹🦈
+MIT — Made by synth with synthclaw 🎹🦞
