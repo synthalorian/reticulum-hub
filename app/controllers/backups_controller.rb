@@ -18,7 +18,9 @@ class BackupsController < ApplicationController
     path = backup_dir.join(filename)
 
     db_path = Rails.configuration.database_configuration[Rails.env]["database"]
-    system("sqlite3 #{db_path} .dump > #{path}")
+    File.open(path, "w") do |out|
+      system("sqlite3", db_path, ".dump", out: out)
+    end
 
     if File.exist?(path)
       redirect_to backups_path, notice: "Backup created: #{filename}"
@@ -28,9 +30,9 @@ class BackupsController < ApplicationController
   end
 
   def download
-    path = Rails.root.join("backups", params[:name])
+    path = backup_path
     if File.exist?(path)
-      send_file path, filename: params[:name], type: "application/sql"
+      send_file path, filename: File.basename(path.to_s), type: "application/sql"
     else
       redirect_to backups_path, alert: "Backup not found."
     end
@@ -43,10 +45,14 @@ class BackupsController < ApplicationController
       # Backup current first
       timestamp = Time.current.strftime("%Y%m%d_%H%M%S")
       safety = Rails.root.join("backups", "pre_restore_#{timestamp}.sql")
-      system("sqlite3 #{db_path} .dump > #{safety}")
+      File.open(safety, "w") do |out|
+        system("sqlite3", db_path, ".dump", out: out)
+      end
 
       # Restore
-      system("sqlite3 #{db_path} < #{uploaded.tempfile.path}")
+      File.open(uploaded.tempfile.path) do |input|
+        system("sqlite3", db_path, in: input)
+      end
       redirect_to backups_path, notice: "Database restored. Safety backup: pre_restore_#{timestamp}.sql"
     else
       redirect_to backups_path, alert: "No file uploaded."
@@ -54,12 +60,20 @@ class BackupsController < ApplicationController
   end
 
   def destroy
-    path = Rails.root.join("backups", params[:name])
+    path = backup_path
     if File.exist?(path)
       File.delete(path)
       redirect_to backups_path, notice: "Backup deleted."
     else
       redirect_to backups_path, alert: "Backup not found."
     end
+  end
+
+  private
+
+  # Only files directly inside backups/ are addressable; File.basename
+  # strips any directory components from the user-supplied name.
+  def backup_path
+    Rails.root.join("backups", File.basename(params[:name].to_s))
   end
 end

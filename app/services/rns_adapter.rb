@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "open3"
+
 # RnsAdapter connects to the Reticulum Network Stack daemon (rnsd)
 # via CLI tools (rnstatus, rnpath, etc.) and provides a Ruby interface
 # for querying status, sending commands, and receiving events.
@@ -207,14 +209,14 @@ class RnsAdapter
     system("which rnstatus > /dev/null 2>&1")
   end
 
-  def run_cli(cmd)
-    output = `#{cmd} 2>&1`
-    raise ConnectionError, "Command failed: #{cmd}" unless $?.success?
+  def run_cli(*command)
+    output, status = Open3.capture2e(*command)
+    raise ConnectionError, "Command failed: #{command.join(' ')}" unless status.success?
     output
   end
 
   def parse_cli_interfaces
-    output = run_cli("rnstatus -j")
+    output = run_cli("rnstatus", "-j")
     data = JSON.parse(output)
 
     (data["interfaces"] || []).map do |iface|
@@ -242,7 +244,7 @@ class RnsAdapter
   end
 
   def parse_cli_stats
-    output = run_cli("rnstatus -j")
+    output = run_cli("rnstatus", "-j")
     data = JSON.parse(output)
 
     {
@@ -266,7 +268,11 @@ class RnsAdapter
 
   def parse_cli_peers
     # rnstatus doesn't have a direct peers command, but we can get peer info from paths
-    output = run_cli("rnpath -t -j 2>/dev/null || echo '[]'")
+    output = begin
+      run_cli("rnpath", "-t", "-j")
+    rescue ConnectionError
+      "[]"
+    end
     data = JSON.parse(output)
 
     (data || []).map do |path|
@@ -286,7 +292,7 @@ class RnsAdapter
 
   def parse_cli_nodes
     # Nodes are discovered through announces — rnstatus -A shows announce stats
-    output = run_cli("rnstatus -j")
+    output = run_cli("rnstatus", "-j")
     data = JSON.parse(output)
 
     # For now, return interfaces as nodes since that's what we can discover
