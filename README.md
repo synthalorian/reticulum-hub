@@ -128,7 +128,7 @@ bin/rails console
 
 ## License
 
-MIT — Made by synth 🎹🤺 with blackclaw ⚫🦞
+MIT — Made by synth 🎹🤺 with Blackclaw ⚫🦞
 
 ---
 
