@@ -6,7 +6,7 @@ A web dashboard for managing [Reticulum](https://reticulum.network/) mesh networ
 
 ![Rails](https://img.shields.io/badge/Rails-8.1-red)
 ![Ruby](https://img.shields.io/badge/Ruby-4.0.4-cc342d)
-![License](https://img.shields.io/badge/License-MIT-blue)
+![License](https://img.shields.io/badge/License-Apache--2.0-blue)
 
 ## Features
 
@@ -130,7 +130,7 @@ bin/rails console
 
 ## License
 
-MIT — Made by synth 🎹🤺
+Apache-2.0, see [LICENSE](LICENSE) — Made by synth 🎹🤺
 
 ---
 
